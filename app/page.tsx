@@ -1,27 +1,13 @@
-"use client"
+import HeroSection from '@/components/hero-section'
+import Navbar from '@/components/home-navbar'
 
-import { useWeb3ModalProvider } from '@web3modal/ethers/react'
-import { BrowserProvider } from 'ethers'
-
-export default function Home() {
-  const { walletProvider } = useWeb3ModalProvider()
-
-  const testFunc = async () => {
-    if (walletProvider){
-      const provider = new BrowserProvider(walletProvider)
-      const signer = await provider.getSigner()
-      const signature = await signer?.signMessage('Hello Web3Modal Ethers')
-      console.log(signer.address)
-    }else{
-      console.log("No wallet connected")
-    }
-  }
-
-
+const Home = () => {
   return (
     <>
-      <w3m-button />
-      <button onClick={testFunc}>Test</button>
+      <Navbar />
+      <HeroSection />
     </>
   )
 }
+
+export default Home;
