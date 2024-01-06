@@ -99,7 +99,7 @@ export const processSignup = async (prevState: SignUpState, formData: FormData )
         };
     }
 
-    redirect("/user")
+    redirect(`/sessions?address=${address}&firstName=${firstName}&lastName=${lastName}&role=user`)
 }
 
 export type CompanyRegisterState = {
@@ -178,19 +178,8 @@ export const processRegisterCompany = async (prevState: CompanyRegisterState, fo
         };
     }
 
-    switch(role){
-        case "manufacturer":
-            redirect("/manufacturer");
-        case "distributor":
-            redirect("/distributor");
-        case "retailer":
-            redirect("retailer");
-        default:
-            return {
-                errors: { general: ['Failed to redirect'] },
-                message: 'Company creation failed.',
-              };
-    }
+    redirect(`/sessions?address=${address}&companyName=${companyName}&role=${role}`)
+
 }
 
 const SignInSchema = z.object({
@@ -217,31 +206,9 @@ export async function authenticate(
     let company = await Company.findOne({ address: address });
 
     if (user){
-        const role = user.role;
-        console.log(role);
-        switch(role){
-            case "user":
-                redirect("/user");
-            case "admin":
-                redirect("/admin");
-            case "superadmin":
-                redirect("superadmin");
-            default:
-                return "Error with user role";
-        }
+        redirect(`/sessions?address=${user.address}&firstName=${user.firstName}&lastName=${user.lastName}&role=${user.role}`)
     } else if (company){
-        const role = company.role;
-        console.log(role);
-        switch(role){
-            case "manufacturer":
-                redirect("/manufacturer");
-            case "distributor":
-                redirect("/distributor");
-            case "retailer":
-                redirect("retailer");
-            default:
-                return "Error with company role";
-        }
+        redirect(`/sessions?address=${company.address}&companyName=${company.companyName}&role=${company.role}`)
     } else {
         return "This wallet is not associated with any account. Click the button below to sign up!"
     }

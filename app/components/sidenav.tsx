@@ -4,15 +4,17 @@ import Link from "next/link";
 import { useDisconnect } from "@web3modal/ethers/react";
 import { useRouter } from "next/navigation";
 import { useWeb3ModalAccount} from '@web3modal/ethers/react'
+import { useSession } from "@/context/SessionContext";
 
 const SideNav = () => {
     const { disconnect } = useDisconnect();
     const { address } = useWeb3ModalAccount();
     const  router = useRouter();
+    const { logout } = useSession();
 
     const handleClick = async () => {
         await disconnect()
-        console.log(address)
+        logout()
         router.push("/signin")
     }
 
