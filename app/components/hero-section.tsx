@@ -5,9 +5,9 @@ const HeroSection = () => {
     return (
       <div className="flex md:flex-row items-center justify-center h-auto bg-gray-100 py-20">
         <div className="max-w-md mx-6">
-          <h1 className="text-4xl font-bold mb-4">Verify your Pharma Products the PharmaTrace Way!</h1>
+          <h1 className="text-4xl font-bold mb-4">Verify your Pharma Products the DawaTrace Way!</h1>
           <p className="text-gray-600 mb-6">
-            Trace the history of your pharmaceutical products, from manufacture to retail, right here at PharmaTrace. 
+            Trace the history of your pharmaceutical products, from manufacture to retail, right here at DawaTrace. 
             Click the link below to get started.
           </p>
           <Link href="/signup" className="bg-green-800 text-white py-2 px-4 rounded-full">

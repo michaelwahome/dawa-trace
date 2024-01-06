@@ -16,19 +16,24 @@ const SideNav = () => {
         await disconnect()
         logout()
         router.push("/signin")
-    }
+    };
 
     return(
         <div className="bg-green-800 grid grid-rows-12 h-full text-white p-4">
             <div className="mb-4">
-                <Link href="/user" className='text-white font-bold text-xl'>
-                    PharmaTrace
+                <Link href="/distributor" className='text-white font-bold text-xl'>
+                    DawaTrace
                 </Link>
             </div>
 
-            <div className="row-start-3 flex flex-col mb-8">
+            <w3m-account-button balance="hide" />
+
+            <div className="row-start-3 flex flex-col">
                 <Link href="#" className='my-2'>
-                    Search for Product
+                    Add Shipment Data
+                </Link>
+                <Link href="#" className='my-2'>
+                    Transfer Ownership to Retailer
                 </Link>
                 <Link href="#" className='my-2'>
                     Manage Account

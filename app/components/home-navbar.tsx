@@ -4,7 +4,7 @@ const Navbar = () => {
     return (
       <nav className="bg-green-800 p-4 flex items-center justify-evenly">
         <Link href="/" className='text-white font-bold text-xl'>
-          PharmaTrace
+          DawaTrace
         </Link>
   
         <div className="flex justify-between space-x-4">

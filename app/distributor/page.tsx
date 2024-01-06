@@ -13,10 +13,10 @@ const Page = () => {
 
             <div className="flex space-x-4">
                 <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
-                    Create New Product
+                    Add Shipment Data
                 </Link>
                 <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
-                    Transfer Ownership To Distributor
+                    Transfer Ownership To Retailer
                 </Link>
                 <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
                     Manage Account

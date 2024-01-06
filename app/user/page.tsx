@@ -13,7 +13,7 @@ const Page = () => {
 
             <div className="flex space-x-4">
                 <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
-                    Search for Product
+                    Search For Product
                 </Link>
                 <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
                     Manage Account

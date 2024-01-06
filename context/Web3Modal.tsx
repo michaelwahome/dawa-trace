@@ -25,7 +25,12 @@ const metadata = {
 createWeb3Modal({
   ethersConfig: defaultConfig({ metadata }),
   chains: [mainnet],
-  projectId
+  projectId,
+  themeVariables: {
+    '--w3m-color-mix': '#276749',
+    '--w3m-color-mix-strength': 50,
+    '--w3m-accent': '#000000'
+  }
 })
 
 export function Web3ModalProvider({ children }: {children: any}) {
