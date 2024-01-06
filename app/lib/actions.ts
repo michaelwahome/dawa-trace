@@ -4,6 +4,7 @@ import {z} from "zod";
 import User from "@/models/user";
 import connectDB from "@/lib/mongodb";
 import Company from "@/models/company";
+import { redirect } from "next/navigation";
 
 export const isAddressUnique = async (address: String) => {
     try {
@@ -90,17 +91,15 @@ export const processSignup = async (prevState: SignUpState, formData: FormData )
         });
     
         const savedUser = await newUser.save();
-    
-        return {
-          errors: {},
-          message: 'User created successfully.',
-        };
+
     } catch (error) {
         return {
           errors: { general: ['Failed to create user'] },
           message: 'User creation failed.',
         };
     }
+
+    redirect("/user")
 }
 
 export type CompanyRegisterState = {
@@ -172,35 +171,78 @@ export const processRegisterCompany = async (prevState: CompanyRegisterState, fo
         });
     
         const savedCompany = await newCompany.save();
-    
-        return {
-          errors: {},
-          message: 'Company created successfully.',
-        };
     } catch (error) {
         return {
           errors: { general: ['Failed to create company'] },
           message: 'Company creation failed.',
         };
     }
+
+    switch(role){
+        case "manufacturer":
+            redirect("/manufacturer");
+        case "distributor":
+            redirect("/distributor");
+        case "retailer":
+            redirect("retailer");
+        default:
+            return {
+                errors: { general: ['Failed to redirect'] },
+                message: 'Company creation failed.',
+              };
+    }
 }
+
+const SignInSchema = z.object({
+    address : z.string().refine((data) => data.trim() !== "", {message: "Please click on the button to connect your wallet"})
+});
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
 ) {
-//   try {
-//     await signIn('credentials', formData);
-//   } catch (error) {
-//     if (error instanceof AuthError) {
-//       switch (error.type) {
-//         case 'CredentialsSignin':
-//           return 'Invalid credentials.';
-//         default:
-//           return 'Something went wrong.';
-//       }
-//     }
-//     throw error;
-//   }
-    return "Error logging in"
+    const validatedSignInFields = SignInSchema.safeParse({
+        address: formData.get("address")
+    })
+    
+    if (!validatedSignInFields.success) {
+        return "Please click on the button to connect your wallet";
+    }  
+      
+    const  { address } = validatedSignInFields.data;
+
+    connectDB();
+
+    let user = await User.findOne({ address: address });
+    let company = await Company.findOne({ address: address });
+
+    if (user){
+        const role = user.role;
+        console.log(role);
+        switch(role){
+            case "user":
+                redirect("/user");
+            case "admin":
+                redirect("/admin");
+            case "superadmin":
+                redirect("superadmin");
+            default:
+                return "Error with user role";
+        }
+    } else if (company){
+        const role = company.role;
+        console.log(role);
+        switch(role){
+            case "manufacturer":
+                redirect("/manufacturer");
+            case "distributor":
+                redirect("/distributor");
+            case "retailer":
+                redirect("retailer");
+            default:
+                return "Error with company role";
+        }
+    } else {
+        return "This wallet is not associated with any account. Click the button below to sign up!"
+    }
 }

@@ -161,7 +161,7 @@ const SignUpForm = () => {
                     value={account}
                     className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500 mb-2"
                     placeholder="Your address will be auto-populated"
-                    readOnly
+                    hidden
                 />
                 <w3m-button balance="hide"/>
                 <div>
