@@ -8,7 +8,7 @@ describe("Pharmaceutical", function () {
   let retailer;
 
   beforeEach(async function () {
-    [manufacturer, distributor, retailer] = await ethers.getSigners();
+    [manufacturer, distributor, distributorB, retailer] = await ethers.getSigners();
 
     Pharmaceutical = await ethers.getContractFactory("Pharmaceutical");
     pharmaceutical = await Pharmaceutical.deploy();
@@ -44,7 +44,6 @@ describe("Pharmaceutical", function () {
         1672303600 // Expiration date (Unix timestamp)
     );
 
-
     // Query the product
     const product = await pharmaceutical.queryProduct(1);
 
@@ -54,6 +53,8 @@ describe("Pharmaceutical", function () {
 
     // Transfer ownership to distributor
     await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(1, distributor.address, "DistributorA");
+    await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(2, distributorB.address, "DistributorB");
+    await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(3, distributorB.address, "DistributorB");
 
      // Add shipment data
      const shipmentDate = 1675000000; // Shipment date (Unix timestamp)
@@ -71,6 +72,8 @@ describe("Pharmaceutical", function () {
 
     // Transfer ownership to retailer
     await pharmaceutical.connect(distributor).transferOwnershipToRetailer(1, retailer.address, "RetailerA");
+    await pharmaceutical.connect(distributorB).transferOwnershipToRetailer(2, retailer.address, "RetailerB");
+    await pharmaceutical.connect(distributorB).transferOwnershipToRetailer(3, retailer.address, "RetailerB");
 
     // Query the product after transfer to retailer
     const productAfterRetailerTransfer = await pharmaceutical.queryProduct(1);
@@ -85,22 +88,34 @@ describe("Pharmaceutical", function () {
     // Verify the product was selected
     expect(productUsingProductId.manufactureDate).to.equal(1630767600);
 
-    // Query the product by ProductId
+    // Query the product by BatchId
     const productsUsingBatchId = await pharmaceutical.queryProductsByBatchId("batch1")
 
     // Verify the product was selected
     expect(productsUsingBatchId[2].productId).to.equal("789");
     
-    // Query the product by ProductId
+    // Query the product by Drug Name
     const productsUsingDrugName = await pharmaceutical.queryProductsByDrugName("Paracetamol")
 
     // Verify the product was selected
     expect(productsUsingDrugName[1].productId).to.equal("456");
 
-    // Query the product by ProductId
+    // Query the product by Manufacturer Name
     const productsUsingManufacturer = await pharmaceutical.queryProductsByManufacturer("ManufacturerA")
 
     // Verify the product was selected
     expect(productsUsingManufacturer[2].productId).to.equal("789");
+
+    // Query the product by Distributor Name
+    const productsUsingDistributor = await pharmaceutical.queryProductsByDistributor("DistributorB")
+
+    // Verify the product was selected
+    expect(productsUsingDistributor[0].productId).to.equal("456");
+
+    // Query the product by Retailer Name
+    const productsUsingRetailer = await pharmaceutical.queryProductsByRetailer("RetailerB")
+
+    // Verify the product was selected
+    expect(productsUsingRetailer[1].productId).to.equal("789");
   });
 });

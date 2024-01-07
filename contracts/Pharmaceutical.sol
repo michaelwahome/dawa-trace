@@ -28,6 +28,8 @@ contract Pharmaceutical {
     mapping(string => uint256[]) public batchIdToProductNumbers;
     mapping(string => uint256[]) public drugNameToProductNumbers;
     mapping(string => uint256[]) public manufacturerNameToProductNumbers;
+    mapping(string => uint256[]) public distributorNameToProductNumbers;
+    mapping(string => uint256[]) public retailerNameToProductNumbers;
 
     event ProductCreated(uint256 productNumber);
     event OwnershipTransferred(uint256 productNumber, address from, address to, State stateChanged, string distributorName, string retailerName);
@@ -89,6 +91,8 @@ contract Pharmaceutical {
         products[_productNumber].currentState = State.Shipped; 
         products[_productNumber].distributorName = _distributorName;
 
+        distributorNameToProductNumbers[_distributorName].push(_productNumber);
+
         emit OwnershipTransferred(_productNumber, previousOwner, _newOwner, State.Shipped, _distributorName, "");
     }
 
@@ -99,6 +103,8 @@ contract Pharmaceutical {
         products[_productNumber].currentOwner = _newOwner;
         products[_productNumber].currentState = State.Received; 
         products[_productNumber].retailerName = _retailerName;
+
+        retailerNameToProductNumbers[_retailerName].push(_productNumber);
 
         emit OwnershipTransferred(_productNumber, previousOwner, _newOwner, State.Received, "", _retailerName);
     }
@@ -146,6 +152,28 @@ contract Pharmaceutical {
 
     function queryProductsByManufacturer(string memory _manufacturerName) external view returns (Product[] memory) {
         uint256[] memory productNumbers = manufacturerNameToProductNumbers[_manufacturerName];
+        Product[] memory result = new Product[](productNumbers.length);
+
+        for (uint256 i = 0; i < productNumbers.length; i++) {
+            result[i] = products[productNumbers[i]];
+        }
+
+        return result;
+    }
+
+    function queryProductsByDistributor(string memory _distributorName) external view returns (Product[] memory) {
+        uint256[] memory productNumbers = distributorNameToProductNumbers[_distributorName];
+        Product[] memory result = new Product[](productNumbers.length);
+
+        for (uint256 i = 0; i < productNumbers.length; i++) {
+            result[i] = products[productNumbers[i]];
+        }
+
+        return result;
+    }
+
+    function queryProductsByRetailer(string memory _retailerName) external view returns (Product[] memory) {
+        uint256[] memory productNumbers = retailerNameToProductNumbers[_retailerName];
         Product[] memory result = new Product[](productNumbers.length);
 
         for (uint256 i = 0; i < productNumbers.length; i++) {
