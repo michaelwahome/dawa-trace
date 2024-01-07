@@ -64,22 +64,23 @@ const Page = () => {
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
+                    router.push("/manufacturer")
                 } else {
                     console.error("Transaction failed!");
                 }
 
-                const productNumber = receipt.events[0].args.productNumber.toNumber();
+                // const productNumber = receipt.events[0].args.productNumber.toNumber();
 
-                // Log the product number
-                console.log('Product Number:', productNumber);
+                // // Log the product number
+                // console.log('Product Number:', productNumber);
 
-                // Query the product details using the product number
-                const productDetails = await contract.queryProduct(productNumber);
+                // // Query the product details using the product number
+                // const productDetails = await contract.queryProduct(productNumber);
 
-                // Log the product details
-                console.log('Product Details:', productDetails);
+                // // Log the product details
+                // console.log('Product Details:', productDetails);
 
-                router.push("/manufacturer");
+                // router.push("/manufacturer");
             } catch (error: any) {
                 console.error("Error during transaction:", error.message);
             }
