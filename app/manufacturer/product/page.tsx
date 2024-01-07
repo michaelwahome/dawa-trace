@@ -1,8 +1,95 @@
-import Link from "next/link";
+"use client"
+
+import { useWeb3ModalProvider } from "@web3modal/ethers/react";
+import { useSession } from "@/context/SessionContext";
+import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { BrowserProvider } from 'ethers'
+import { ethers } from "ethers";
+import { pharmaceuticalAddress } from "@/config";
+import Pharmaceutical from "@/lib/Pharmaceutical.json";
+import { getProduct } from "@/app/lib/blockchain";
 
 const Page = () => {
+    const { walletProvider } = useWeb3ModalProvider();
+    const { user } = useSession();
+    const router = useRouter();
+    const [error, setError ] = useState(false);
+
+    const processNewProduct = async (formData: FormData) => {
+        const manufacturerName = user?.companyName;
+
+        if(manufacturerName == "") {
+            router.push("/signin")
+        }
+
+        const productId = formData.get("productId");
+        const batchId = formData.get("batchId");
+        const drugName = formData.get("name");
+        const manufactureDate = formData.get("manufactureDate");
+        const expirationDate = formData.get("expirationDate");
+
+        const manufactureDateUnix = typeof manufactureDate === "string" ? Math.floor(new Date(manufactureDate).getTime() / 1000) : 0;
+        const expirationDateUnix = typeof expirationDate === "string" ? Math.floor(new Date(expirationDate).getTime() / 1000) : 0;
+        
+
+        if (walletProvider){
+            const provider = new BrowserProvider(walletProvider);
+            const signer = await provider.getSigner();
+            const signature = await signer?.signMessage("Publish New Pharmaceutical Product To The Blockchain")
+
+            try {
+                let contract = new ethers.Contract(
+                    pharmaceuticalAddress,
+                    Pharmaceutical.abi,
+                    signer
+                );
+    
+                let transaction = await contract.createProduct(
+                    productId,
+                    batchId,
+                    drugName,
+                    manufacturerName,
+                    manufactureDateUnix,
+                    expirationDateUnix
+                );
+    
+                console.log("Transaction Hash:", transaction.hash);
+    
+                // Wait for the transaction receipt
+                const receipt = await transaction.wait();
+                
+                console.log("Transaction Receipt:", receipt);
+    
+                // Check if the transaction was successful
+                if (receipt.status === 1) {
+                    console.log("Transaction successful!");
+                } else {
+                    console.error("Transaction failed!");
+                }
+
+                const productNumber = receipt.events[0].args.productNumber.toNumber();
+
+                // Log the product number
+                console.log('Product Number:', productNumber);
+
+                // Query the product details using the product number
+                const productDetails = await contract.queryProduct(productNumber);
+
+                // Log the product details
+                console.log('Product Details:', productDetails);
+
+                router.push("/manufacturer");
+            } catch (error: any) {
+                console.error("Error during transaction:", error.message);
+            }
+        }
+        
+    }
+   
+
     return (
-        <form action={""} className="flex flex-col bg-white p-8 rounded shadow-md w-full">
+        <form action={processNewProduct} className="flex flex-col bg-white p-8 rounded shadow-md w-full">
             <h2 className="text-2xl font-bold mb-4 text-center">Create New Product</h2>
             <div className="mb-4">
                 <label htmlFor="productId" className="block text-gray-700 text-sm font-bold mb-2">
@@ -14,6 +101,7 @@ const Page = () => {
                 name="productId"
                 className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
                 placeholder="Enter the pharmaceutical's Product ID"
+                required
                 />
                 {/* <div>
                     {state.errors?.firstName &&
@@ -35,6 +123,7 @@ const Page = () => {
                 name="batchId"
                 className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
                 placeholder="Enter the pharmaceutical's Batch ID"
+                required
                 />
                 {/* <div>
                     {state.errors?.lastName &&
@@ -56,6 +145,7 @@ const Page = () => {
                 name="name"
                 className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
                 placeholder="Enter the pharmaceutical's name"
+                required
                 />
                 {/* <div>
                     {state.errors?.lastName &&
@@ -68,32 +158,15 @@ const Page = () => {
             </div>
 
             <div className="mb-4">
-                <input
-                type="text"
-                id="companyName"
-                name="companyName"
-                className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
-                hidden
-                />
-                {/* <div>
-                    {state.errors?.lastName &&
-                    state.errors.lastName.map((error: string) => (
-                        <p className="mt-2 text-sm text-red-500" key={error}>
-                        {error}
-                        </p>
-                    ))}
-                </div> */}
-            </div>
-
-            <div className="mb-4">
-                <label htmlFor="manufacturingDate" className="block text-gray-700 text-sm font-bold mb-2">
-                    Manufacturing Date
+                <label htmlFor="manufactureDate" className="block text-gray-700 text-sm font-bold mb-2">
+                    Date of Manufacture
                 </label>
                 <input
                 type="date"
-                id="manufacturingDate"
-                name="manufacturingDate"
+                id="manufactureDate"
+                name="manufactureDate"
                 className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
+                required
                 />
                 {/* <div>
                     {state.errors?.dob &&

@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useDisconnect } from "@web3modal/ethers/react";
 import { useRouter } from "next/navigation";
-import { useWeb3ModalAccount} from '@web3modal/ethers/react'
+import { useWeb3Modal} from '@web3modal/ethers/react'
 import { useSession } from "@/context/SessionContext";
 
 const SideNav = () => {
     const { disconnect } = useDisconnect();
-    const { address } = useWeb3ModalAccount();
+    const { open } = useWeb3Modal();
     const  router = useRouter();
     const { logout} = useSession();
 
@@ -18,6 +18,10 @@ const SideNav = () => {
         router.push("/signin")
     };
 
+    const viewAccount = () => {
+        open({view: "Account"})
+    }
+
     return(
         <div className="bg-green-800 grid grid-rows-12 h-full text-white p-4">
             <div className="mb-4">
@@ -26,9 +30,11 @@ const SideNav = () => {
                 </Link>
             </div>
 
-            <w3m-account-button balance="hide" />
+            <div className="row-start-3">
+                <button onClick={viewAccount}>View Address</button>
+            </div>
 
-            <div className="row-start-3 flex flex-col">
+            <div className="row-start-5 flex flex-col">
                 <Link href="#" className='my-2'>
                     Search For Product
                 </Link>

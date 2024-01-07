@@ -28,7 +28,7 @@ createWeb3Modal({
   projectId,
   themeVariables: {
     '--w3m-color-mix': '#276749',
-    '--w3m-color-mix-strength': 50,
+    '--w3m-color-mix-strength': 20,
     '--w3m-accent': '#000000'
   }
 })
