@@ -33,13 +33,14 @@ const Page = async () => {
                         </Link>
                     </div>
                 </div>
-    
-                <TransferDistributor distributorNames={distributorNames} addresses={distributorAddresses} />
 
-                <Suspense >
-                    <ManufacturerTable companyNames={companyNames} addresses={addresses}/>
-                </Suspense>
+                <div className="flex flex-col gap-8">
+                    <TransferDistributor distributorNames={distributorNames} addresses={distributorAddresses} />
 
+                    <Suspense >
+                        <ManufacturerTable companyNames={companyNames} addresses={addresses}/>
+                    </Suspense>
+                </div>
             </>
         )
     } catch (error: any){

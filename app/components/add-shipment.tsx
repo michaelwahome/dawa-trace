@@ -8,39 +8,19 @@ import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { revalidatePath } from "next/cache";
 
-const TransferDistributor = (
-    {
-        distributorNames,
-        addresses
-    } : {
-        distributorNames: string[],
-        addresses: string[]
-    }
-) => {
+const AddShipment = () => {
     const { walletProvider } = useWeb3ModalProvider();
     const router = useRouter();
 
-    const transferToDistributor = async (formData: FormData) => {
+    const addShipment = async (formData: FormData) => {
         const productNumber = formData.get("productNumber");
-        const distributorName = formData.get("distributorName");
 
-        const nameToAddress = (name: any) => {
-            const nameIndex = distributorNames.indexOf(name);
-    
-            if (nameIndex !== -1 ){
-                return addresses[nameIndex]
-            } else{
-                return "Default"
-            }
-        }
-
-        const address = nameToAddress(distributorName)
-
+        const shipmentDateUnix = Math.floor(new Date().getTime() / 1000);
 
         if (walletProvider){
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            const signature = await signer?.signMessage(`Transfer ownership of this product to ${distributorName}`)
+            const signature = await signer?.signMessage(`Ship the selected product`)
 
             try {
                 const contract = new ethers.Contract(
@@ -49,10 +29,9 @@ const TransferDistributor = (
                     signer
                 );
     
-                const transaction = await contract.transferOwnershipToDistributor(
+                const transaction = await contract.addShipmentDate(
                     productNumber,
-                    address,
-                    distributorName
+                    shipmentDateUnix
                 );
     
                 console.log("Transaction Hash:", transaction.hash);
@@ -65,8 +44,8 @@ const TransferDistributor = (
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
-                    revalidatePath("/manufacturer")
-                    router.push("/manufacturer")
+                    revalidatePath("/distributor")
+                    router.push("/distributor")
                 } else {
                     console.error("Transaction failed!");
                 }
@@ -82,7 +61,7 @@ const TransferDistributor = (
                 // // Log the product details
                 // console.log('Product Details:', productDetails);
 
-                // router.push("/manufacturer");
+                // router.push("/distributor");
             } catch (error: any) {
                 console.error("Error during transaction:", error.message);
             }
@@ -91,8 +70,8 @@ const TransferDistributor = (
 
 
     return (
-        <form action={transferToDistributor} className="flex flex-col bg-white p-8 rounded shadow-md shadow-green-800 w-full">
-            <h2 className="text-2xl font-bold mb-4 text-center">Transfer Ownership to Distributor</h2>
+        <form action={addShipment} className="flex flex-col bg-white p-8 rounded shadow-md shadow-green-800 w-full">
+            <h2 className="text-2xl font-bold mb-4 text-center">Ship a Product</h2>
             <div className="mb-4">
                 <label htmlFor="productNumber" className="block text-gray-700 text-sm font-bold mb-2">
                     Product Number
@@ -116,35 +95,6 @@ const TransferDistributor = (
                 </div> */}
             </div>
 
-            <div className="mb-4">
-                <label htmlFor="distributorName" className="block text-gray-700 text-sm font-bold mb-2">
-                    Distributor Name
-                </label>
-                <select
-                    id="distributorName"
-                    name="distributorName"
-                    className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
-                    required
-                >
-                    <option value="" disabled selected>
-                        Choose a distributor
-                    </option>
-                    {distributorNames.map((distributor, index) => (
-                        <option key={index} value={distributor}>
-                            {distributor}
-                        </option>
-                    ))}
-                </select>
-                {/* <div>
-                    {state.errors?.lastName &&
-                    state.errors.lastName.map((error: string) => (
-                        <p className="mt-2 text-sm text-red-500" key={error}>
-                            {error}
-                        </p>
-                    ))}
-                </div> */}
-            </div>
-
 
             <button className="bg-green-800 text-white py-2 px-4 rounded-full hover:bg-green-600 
             focus:outline-none focus:ring focus:border-green-300 aria-disabled:cursor-not-allowed
@@ -155,4 +105,4 @@ const TransferDistributor = (
     )
 }
 
-export default TransferDistributor;
+export default AddShipment;

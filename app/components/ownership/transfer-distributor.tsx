@@ -8,24 +8,24 @@ import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { revalidatePath } from "next/cache";
 
-const TransferDistributor = (
+const TransferRetailer = (
     {
-        distributorNames,
+        retailerNames,
         addresses
     } : {
-        distributorNames: string[],
+        retailerNames: string[],
         addresses: string[]
     }
 ) => {
     const { walletProvider } = useWeb3ModalProvider();
     const router = useRouter();
 
-    const transferToDistributor = async (formData: FormData) => {
+    const transferToRetailer = async (formData: FormData) => {
         const productNumber = formData.get("productNumber");
-        const distributorName = formData.get("distributorName");
+        const retailerName = formData.get("retailerName");
 
         const nameToAddress = (name: any) => {
-            const nameIndex = distributorNames.indexOf(name);
+            const nameIndex = retailerNames.indexOf(name);
     
             if (nameIndex !== -1 ){
                 return addresses[nameIndex]
@@ -34,13 +34,13 @@ const TransferDistributor = (
             }
         }
 
-        const address = nameToAddress(distributorName)
+        const address = nameToAddress(retailerName)
 
 
         if (walletProvider){
             const provider = new BrowserProvider(walletProvider);
             const signer = await provider.getSigner();
-            const signature = await signer?.signMessage(`Transfer ownership of this product to ${distributorName}`)
+            const signature = await signer?.signMessage(`Transfer ownership of this product to ${retailerName}`)
 
             try {
                 const contract = new ethers.Contract(
@@ -49,10 +49,10 @@ const TransferDistributor = (
                     signer
                 );
     
-                const transaction = await contract.transferOwnershipToDistributor(
+                const transaction = await contract.transferOwnershipToRetailer(
                     productNumber,
                     address,
-                    distributorName
+                    retailerName
                 );
     
                 console.log("Transaction Hash:", transaction.hash);
@@ -65,8 +65,8 @@ const TransferDistributor = (
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
-                    revalidatePath("/manufacturer")
-                    router.push("/manufacturer")
+                    revalidatePath("/distributor")
+                    router.push("/distributor")
                 } else {
                     console.error("Transaction failed!");
                 }
@@ -91,8 +91,8 @@ const TransferDistributor = (
 
 
     return (
-        <form action={transferToDistributor} className="flex flex-col bg-white p-8 rounded shadow-md shadow-green-800 w-full">
-            <h2 className="text-2xl font-bold mb-4 text-center">Transfer Ownership to Distributor</h2>
+        <form action={transferToRetailer} className="flex flex-col bg-white p-8 rounded shadow-md shadow-green-800 w-full">
+            <h2 className="text-2xl font-bold mb-4 text-center">Transfer Ownership to Retailer</h2>
             <div className="mb-4">
                 <label htmlFor="productNumber" className="block text-gray-700 text-sm font-bold mb-2">
                     Product Number
@@ -117,21 +117,21 @@ const TransferDistributor = (
             </div>
 
             <div className="mb-4">
-                <label htmlFor="distributorName" className="block text-gray-700 text-sm font-bold mb-2">
-                    Distributor Name
+                <label htmlFor="retailerName" className="block text-gray-700 text-sm font-bold mb-2">
+                    Retailer Name
                 </label>
                 <select
-                    id="distributorName"
-                    name="distributorName"
+                    id="retailerName"
+                    name="retailerName"
                     className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-green-500"
                     required
                 >
                     <option value="" disabled selected>
-                        Choose a distributor
+                        Choose a retailer
                     </option>
-                    {distributorNames.map((distributor, index) => (
-                        <option key={index} value={distributor}>
-                            {distributor}
+                    {retailerNames.map((retailer, index) => (
+                        <option key={index} value={retailer}>
+                            {retailer}
                         </option>
                     ))}
                 </select>
@@ -155,4 +155,4 @@ const TransferDistributor = (
     )
 }
 
-export default TransferDistributor;
+export default TransferRetailer;

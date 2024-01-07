@@ -3,12 +3,13 @@
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { useSession } from "@/context/SessionContext";
 import { useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { BrowserProvider } from 'ethers'
 import { ethers } from "ethers";
 import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { getProduct } from "@/app/lib/blockchain";
+import { revalidatePath } from "next/cache";
 
 const Page = () => {
     const { walletProvider } = useWeb3ModalProvider();
@@ -64,23 +65,12 @@ const Page = () => {
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
+                    revalidatePath("/manufacturer")
                     router.push("/manufacturer")
                 } else {
                     console.error("Transaction failed!");
                 }
 
-                // const productNumber = receipt.events[0].args.productNumber.toNumber();
-
-                // // Log the product number
-                // console.log('Product Number:', productNumber);
-
-                // // Query the product details using the product number
-                // const productDetails = await contract.queryProduct(productNumber);
-
-                // // Log the product details
-                // console.log('Product Details:', productDetails);
-
-                // router.push("/manufacturer");
             } catch (error: any) {
                 console.error("Error during transaction:", error.message);
             }

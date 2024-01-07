@@ -8,7 +8,7 @@ import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { useSession } from "@/context/SessionContext";
 import { useRouter } from "next/navigation";
 
-const ManufacturerTable = async (
+const DistributorTable = async (
     {
         companyNames,
         addresses
@@ -21,9 +21,9 @@ const ManufacturerTable = async (
     const { walletProvider } = useWeb3ModalProvider();
     const router = useRouter();
 
-    const manufacturerName = user?.companyName;
+    const distributorName = user?.companyName;
 
-    if (manufacturerName == ""){
+    if (distributorName == ""){
         router.push("/signin")
     }
 
@@ -72,7 +72,7 @@ const ManufacturerTable = async (
                 provider
             );
 
-            const products = await contract.queryProductsByManufacturer(manufacturerName);
+            const products = await contract.queryProductsByDistributor(distributorName);
 
             return (
                 <div className="max-w-screen-lg text-center shadow-md shadow-green-800 p-8 mx-auto">
@@ -90,6 +90,7 @@ const ManufacturerTable = async (
                                     <th className="py-2 px-4 border-b">Expiration Date</th>
                                     <th className="py-2 px-4 border-b">Current Owner</th>
                                     <th className="py-2 px-4 border-b">Status</th>
+                                    <th className="py-2 px-4 border-b">Shipment Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -104,6 +105,7 @@ const ManufacturerTable = async (
                                         <td className="py-2 px-4 border-b">{formatDate(product.expirationDate)}</td>
                                         <td className="py-2 px-4 border-b">{addressToName(product.currentOwner)}</td>
                                         <td className="py-2 px-4 border-b">{stateToString(toNumber(product.currentState))}</td>
+                                        <td className="py-2 px-4 border-b">{toNumber(product.shipmentDate) !== 0 ? formatDate(product.shipmentDate): "Not Yet Shipped"}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -121,4 +123,4 @@ const ManufacturerTable = async (
     )
 }
 
-export default ManufacturerTable;
+export default DistributorTable;

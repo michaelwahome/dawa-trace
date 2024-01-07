@@ -36,12 +36,6 @@ const SideNav = () => {
 
             <div className="row-start-5 flex flex-col">
                 <Link href="#" className='my-2'>
-                    Add Shipment Data
-                </Link>
-                <Link href="#" className='my-2'>
-                    Transfer Ownership to Retailer
-                </Link>
-                <Link href="#" className='my-2'>
                     Manage Account
                 </Link>
             </div>
