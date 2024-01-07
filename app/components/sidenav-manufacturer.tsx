@@ -39,9 +39,6 @@ const SideNav = () => {
                     Create New Product
                 </Link>
                 <Link href="#" className='my-2'>
-                    Transfer Ownership To Distributor
-                </Link>
-                <Link href="#" className='my-2'>
                     Manage Account
                 </Link>
             </div>

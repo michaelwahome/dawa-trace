@@ -8,7 +8,15 @@ import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { useSession } from "@/context/SessionContext";
 import { useRouter } from "next/navigation";
 
-const ManufacturerTable = async () => {
+const ManufacturerTable = async (
+    {
+        companyNames,
+        addresses
+    } : {
+        companyNames: string[],
+        addresses: string[]
+    }
+) => {
     const { user } = useSession();
     const { walletProvider } = useWeb3ModalProvider();
     const router = useRouter();
@@ -44,6 +52,16 @@ const ManufacturerTable = async () => {
         }
     };
 
+    const addressToName = (address: string) => {
+        const addressIndex = addresses.indexOf(address);
+
+        if (addressIndex !== -1 ){
+            return companyNames[addressIndex]
+        } else{
+            return "Default"
+        }
+    }
+
     if (walletProvider){
         const provider = new BrowserProvider(walletProvider);
 
@@ -59,7 +77,7 @@ const ManufacturerTable = async () => {
             console.log(products)
 
             return (
-                <div className="max-w-screen-lg mx-auto">
+                <div className="max-w-screen-lg text-center mt-5 shadow-md p-8 mx-auto">
                     <h1 className="text-2xl font-bold mb-4">Product Table</h1>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white border border-gray-300">
@@ -86,7 +104,7 @@ const ManufacturerTable = async () => {
                                         <td className="py-2 px-4 border-b">{product.manufacturerName}</td>
                                         <td className="py-2 px-4 border-b">{formatDate(product.manufactureDate)}</td>
                                         <td className="py-2 px-4 border-b">{formatDate(product.expirationDate)}</td>
-                                        <td className="py-2 px-4 border-b">{product.currentOwner}</td>
+                                        <td className="py-2 px-4 border-b">{addressToName(product.currentOwner)}</td>
                                         <td className="py-2 px-4 border-b">{stateToString(toNumber(product.currentState))}</td>
                                     </tr>
                                 ))}
@@ -101,7 +119,7 @@ const ManufacturerTable = async () => {
     }
 
     return (
-        <h1>HELLO THIS IS THE TABLE</h1>
+        <h2 className="text-xl font-bold mt-5">TECHNICAL DIFFICULTIES CONNECTING TO BLOCKCHAIN</h2>
     )
 }
 
