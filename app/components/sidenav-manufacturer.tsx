@@ -30,7 +30,7 @@ const SideNav = () => {
             <w3m-account-button balance="hide" />
 
             <div className="row-start-3 flex flex-col">
-                <Link href="#" className='my-2'>
+                <Link href="/manufacturer/product" className='my-2'>
                     Create New Product
                 </Link>
                 <Link href="#" className='my-2'>

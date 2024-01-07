@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 require("@nomicfoundation/hardhat-toolbox");
 
 const projectId = process.env.PROJECT_ID

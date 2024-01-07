@@ -12,7 +12,7 @@ const Page = () => {
             <h1 className="text-2xl font-bold mb-8">Hello {`${companyName}`}!</h1>
 
             <div className="flex space-x-4">
-                <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
+                <Link href="/manufacturer/product" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
                     Create New Product
                 </Link>
                 <Link href="#" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">
