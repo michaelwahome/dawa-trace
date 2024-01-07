@@ -24,6 +24,7 @@
       "@/models/*": ["./app/models/*"],
       "@/lib/*": ["./app/lib/*"],
       "@/context/*": ["./context/*"],
+      "@/artifacts/*": ["./artifacts/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

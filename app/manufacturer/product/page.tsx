@@ -39,13 +39,13 @@ const Page = () => {
             const signature = await signer?.signMessage("Publish New Pharmaceutical Product To The Blockchain")
 
             try {
-                let contract = new ethers.Contract(
+                const contract = new ethers.Contract(
                     pharmaceuticalAddress,
                     Pharmaceutical.abi,
                     signer
                 );
     
-                let transaction = await contract.createProduct(
+                const transaction = await contract.createProduct(
                     productId,
                     batchId,
                     drugName,
