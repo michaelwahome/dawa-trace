@@ -23,6 +23,7 @@ const SideNav = () => {
     }
 
     return(
+        
         <div className="bg-green-800 grid grid-rows-12 h-full text-white p-4">
             <div className="mb-4">
                 <Link href="/retailer" className='text-white font-bold text-xl'>
@@ -35,9 +36,6 @@ const SideNav = () => {
             </div>
 
             <div className="row-start-5 flex flex-col">
-                <Link href="#" className='my-2'>
-                    Confirm Receipt Of Product
-                </Link>
                 <Link href="#" className='my-2'>
                     Manage Account
                 </Link>

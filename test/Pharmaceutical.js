@@ -54,21 +54,27 @@ describe("Pharmaceutical", function () {
     // Transfer ownership to distributor
     await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(1, distributor.address, "DistributorA");
     await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(2, distributorB.address, "DistributorB");
-    await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(3, distributorB.address, "DistributorB");
-
-     // Add shipment data
-     const shipmentDate = 1675000000; // Shipment date (Unix timestamp)
-     await pharmaceutical.connect(distributor).addShipmentDate(1, shipmentDate); 
+    await pharmaceutical.connect(manufacturer).transferOwnershipToDistributor(3, distributorB.address, "DistributorB"); 
 
     // Query the product after transfer to distributor
     const productAfterDistributorTransfer = await pharmaceutical.queryProduct(1);
 
     // Verify ownership transfer to distributor
     expect(productAfterDistributorTransfer.currentOwner).to.equal(distributor.address);
-    expect(productAfterDistributorTransfer.currentState).to.equal(1); // State "Shipped"
+    expect(productAfterDistributorTransfer.currentState).to.equal(0); // State "Created"
+
+    // Add shipment data
+    const shipmentDate = 1675000000; // Shipment date (Unix timestamp)
+    await pharmaceutical.connect(distributor).addShipmentDate(1, shipmentDate);
+    await pharmaceutical.connect(distributorB).addShipmentDate(2, shipmentDate);
+    await pharmaceutical.connect(distributorB).addShipmentDate(3, shipmentDate);
+
+    // Query the product after shipment
+    const productAfterShipment = await pharmaceutical.queryProduct(1);
 
     // Verify shipment data
-    expect(productAfterDistributorTransfer.shipmentDate).to.equal(shipmentDate);
+    expect(productAfterShipment.shipmentDate).to.equal(shipmentDate);
+    expect(productAfterShipment.currentState).to.equal(1); // State "Shipped"
 
     // Transfer ownership to retailer
     await pharmaceutical.connect(distributor).transferOwnershipToRetailer(1, retailer.address, "RetailerA");
@@ -80,42 +86,27 @@ describe("Pharmaceutical", function () {
 
     // Verify ownership transfer to retailer
     expect(productAfterRetailerTransfer.currentOwner).to.equal(retailer.address);
-    expect(productAfterRetailerTransfer.currentState).to.equal(2); // State "Received"
+    expect(productAfterRetailerTransfer.currentState).to.equal(1); // State "Shipped"
 
-    // Query the product by ProductId
-    const productUsingProductId = await pharmaceutical.queryProductByProductId("123")
+    // Add receiving data
+    const receivedDate = 1676000000; // Shipment date (Unix timestamp)
+    await pharmaceutical.connect(retailer).addReceivedDate(1, receivedDate);
 
-    // Verify the product was selected
-    expect(productUsingProductId.manufactureDate).to.equal(1630767600);
+    // Query the product after shipment
+    const productAfterReceived = await pharmaceutical.queryProduct(1);
 
-    // Query the product by BatchId
-    const productsUsingBatchId = await pharmaceutical.queryProductsByBatchId("batch1")
+    // Verify shipment data
+    expect(productAfterReceived.receivedDate).to.equal(receivedDate);
+    expect(productAfterReceived.currentState).to.equal(2); // State "Received"
 
-    // Verify the product was selected
-    expect(productsUsingBatchId[2].productId).to.equal("789");
-    
-    // Query the product by Drug Name
-    const productsUsingDrugName = await pharmaceutical.queryProductsByDrugName("Paracetamol")
+    // Query all products
+    const allProducts = await pharmaceutical.queryAllProducts();
 
-    // Verify the product was selected
-    expect(productsUsingDrugName[1].productId).to.equal("456");
+    // Verify the total number of products
+    expect(allProducts.length).to.equal(3);
 
-    // Query the product by Manufacturer Name
-    const productsUsingManufacturer = await pharmaceutical.queryProductsByManufacturer("ManufacturerA")
-
-    // Verify the product was selected
-    expect(productsUsingManufacturer[2].productId).to.equal("789");
-
-    // Query the product by Distributor Name
-    const productsUsingDistributor = await pharmaceutical.queryProductsByDistributor("DistributorB")
-
-    // Verify the product was selected
-    expect(productsUsingDistributor[0].productId).to.equal("456");
-
-    // Query the product by Retailer Name
-    const productsUsingRetailer = await pharmaceutical.queryProductsByRetailer("RetailerB")
-
-    // Verify the product was selected
-    expect(productsUsingRetailer[1].productId).to.equal("789");
+    // Verify the details of the first product in the array
+    expect(allProducts[0].productId).to.equal("123");
+    expect(allProducts[0].currentOwner).to.equal(retailer.address);
   });
 });

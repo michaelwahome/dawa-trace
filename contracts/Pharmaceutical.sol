@@ -20,6 +20,7 @@ contract Pharmaceutical {
         State currentState;
         uint256 shipmentDate;
         string distributorName;
+        uint256 receivedDate;
         string retailerName;
     }
 
@@ -34,6 +35,7 @@ contract Pharmaceutical {
     event ProductCreated(uint256 productNumber);
     event OwnershipTransferred(uint256 productNumber, address from, address to, State stateChanged, string distributorName, string retailerName);
     event ShipmentAdded(uint256 productNumber, uint256 shipmentDate);
+    event ReceiveAdded(uint256 productNumber, uint256 receivedDate);
 
     function generateProductNumber() private returns (uint256) {
         productNumberCounter++;
@@ -71,6 +73,7 @@ contract Pharmaceutical {
             currentState: State.Created,
             shipmentDate: 0,
             distributorName: "",
+            receivedDate: 0,
             retailerName: ""
         });
 
@@ -88,29 +91,27 @@ contract Pharmaceutical {
 
         address previousOwner = products[_productNumber].currentOwner;
         products[_productNumber].currentOwner = _newOwner;
-        products[_productNumber].currentState = State.Shipped; 
         products[_productNumber].distributorName = _distributorName;
 
         distributorNameToProductNumbers[_distributorName].push(_productNumber);
 
-        emit OwnershipTransferred(_productNumber, previousOwner, _newOwner, State.Shipped, _distributorName, "");
+        emit OwnershipTransferred(_productNumber, previousOwner, _newOwner, State.Created, _distributorName, "");
     }
 
     function transferOwnershipToRetailer(uint256 _productNumber, address _newOwner, string memory _retailerName) external onlyOwner(_productNumber) {
-        require(products[_productNumber].currentState == State.Shipped, "Product is not in a transferable state");
+        require(products[_productNumber].currentState == State.Shipped, "Product is not in a transferable state B");
 
         address previousOwner = products[_productNumber].currentOwner;
         products[_productNumber].currentOwner = _newOwner;
-        products[_productNumber].currentState = State.Received; 
         products[_productNumber].retailerName = _retailerName;
 
         retailerNameToProductNumbers[_retailerName].push(_productNumber);
 
-        emit OwnershipTransferred(_productNumber, previousOwner, _newOwner, State.Received, "", _retailerName);
+        emit OwnershipTransferred(_productNumber, previousOwner, _newOwner, State.Shipped, "", _retailerName);
     }
 
     function addShipmentDate(uint256 _productNumber, uint256 _shipmentDate) external onlyOwner(_productNumber) {
-        require(products[_productNumber].currentState == State.Shipped, "Product is not in a shippable state");
+        require(products[_productNumber].currentState == State.Created, "Product is not in a shippable state");
 
         products[_productNumber].currentState = State.Shipped;
         products[_productNumber].shipmentDate = _shipmentDate;
@@ -118,8 +119,28 @@ contract Pharmaceutical {
         emit ShipmentAdded(_productNumber, _shipmentDate);
     }
 
+    function addReceivedDate(uint256 _productNumber, uint256 _receivedDate) external onlyOwner(_productNumber) {
+        require(products[_productNumber].currentState == State.Shipped, "Product is not in a receivable state");
+
+        products[_productNumber].currentState = State.Received;
+        products[_productNumber].receivedDate = _receivedDate;
+
+        emit ReceiveAdded(_productNumber, _receivedDate);
+    }
+
     function queryProduct(uint256 _productNumber) external view returns (Product memory) {
         return products[_productNumber];
+    }
+
+    function queryAllProducts() external view returns (Product[] memory) {
+        uint256 totalProducts = productNumberCounter;
+        Product[] memory result = new Product[](totalProducts);
+
+        for (uint256 i = 1; i <= totalProducts; i++) {
+            result[i - 1] = products[i];
+        }
+
+        return result;
     }
 
     function queryProductByProductId(string memory _productId) external view returns (Product memory) {
