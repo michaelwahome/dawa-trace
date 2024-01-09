@@ -6,7 +6,6 @@ import { BrowserProvider } from 'ethers'
 import { ethers } from "ethers";
 import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
-import { revalidatePath } from "next/cache";
 
 const TransferDistributor = (
     {
@@ -65,8 +64,7 @@ const TransferDistributor = (
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
-                    revalidatePath("/manufacturer")
-                    router.push("/manufacturer")
+                    router.push("/reload?path=manufacturer")
                 } else {
                     console.error("Transaction failed!");
                 }

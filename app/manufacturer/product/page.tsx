@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link";
 import { useWeb3ModalProvider } from "@web3modal/ethers/react";
 import { useSession } from "@/context/SessionContext";
 import { useRouter } from "next/navigation";
@@ -8,8 +9,8 @@ import { BrowserProvider } from 'ethers'
 import { ethers } from "ethers";
 import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
+import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
 import { getProduct } from "@/app/lib/blockchain";
-import { revalidatePath } from "next/cache";
 
 const Page = () => {
     const { walletProvider } = useWeb3ModalProvider();
@@ -65,7 +66,6 @@ const Page = () => {
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
-                    revalidatePath("/manufacturer")
                     router.push("/manufacturer")
                 } else {
                     console.error("Transaction failed!");
@@ -81,6 +81,10 @@ const Page = () => {
 
     return (
         <form action={processNewProduct} className="flex flex-col bg-white p-8 rounded shadow-md w-full">
+            <Link className="flex flex-row gap-3 items-center text-2xl font-bold" href="/manufacturer">
+                <ArrowUturnLeftIcon className="h-7 w-7"/>
+                Back
+            </Link>
             <h2 className="text-2xl font-bold mb-4 text-center">Create New Product</h2>
             <div className="mb-4">
                 <label htmlFor="productId" className="block text-gray-700 text-sm font-bold mb-2">

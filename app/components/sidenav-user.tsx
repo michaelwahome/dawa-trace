@@ -35,7 +35,7 @@ const SideNav = () => {
             </div>
 
             <div className="row-start-5 flex flex-col">
-                <Link href="#" className='my-2'>
+                <Link href="/user/menu" className='my-2'>
                     Search For Product
                 </Link>
                 <Link href="#" className='my-2'>

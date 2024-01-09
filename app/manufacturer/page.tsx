@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import connectDB from "@/lib/mongodb";
 import Company from "@/models/company";
 import TransferDistributor from "@/components/ownership/transfer-manufacturer";
+import { HomeIcon } from "@heroicons/react/24/outline";
 
 const Page = async () => {
     
@@ -22,7 +23,11 @@ const Page = async () => {
         return (
             <>
                 <div className="p-8">
-                    <Greeting userType="manufacturer" />
+                    <div className="flex flex-row gap-3 items-centre">
+                        <HomeIcon className="h-7 w-7" />
+
+                        <Greeting userType="manufacturer" />
+                    </div>
     
                     <div className="flex space-x-4">
                         <Link href="/manufacturer/product" className="bg-green-800 text-white py-4 px-8 rounded-full hover:bg-green-700 focus:outline-none focus:ring focus:border-green-300">

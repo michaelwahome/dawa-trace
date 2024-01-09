@@ -6,12 +6,12 @@ import { ethers } from "ethers";
 import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { useSession } from "@/context/SessionContext";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const UserTable = async (
+const RetailerSearch = async (
     {
         companyNames,
-        addresses
+        addresses,
     } : {
         companyNames: string[],
         addresses: string[]
@@ -20,6 +20,15 @@ const UserTable = async (
     const { user } = useSession();
     const { walletProvider } = useWeb3ModalProvider();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const query = searchParams.get("query") || undefined
+
+    if(!query){
+        return (
+            <h2 className="text-xl font-bold mt-5">KINDLY ENTER A SEARCH STRING</h2>
+        )
+    }
 
     const firstName = user?.firstName;
 
@@ -72,11 +81,13 @@ const UserTable = async (
                 provider
             );
 
-            const productsFull = await contract.queryAllProducts();
+            const products = await contract.queryProductsByRetailer(query);
 
-            const products = productsFull.filter((productInstance: any) => {
-                return productInstance.retailerName !== ""
-            })
+            if(products.length === 0){
+                return (
+                    <h2 className="text-xl font-bold mt-5">QUERY NOT FOUND: TYPE ENTIRE RETAILER NAME (CASE SENSITIVE)</h2>
+                )
+            }
 
             return (
                 <div className="max-w-screen-lg text-center shadow-md shadow-green-800 p-8 mx-auto">
@@ -125,4 +136,4 @@ const UserTable = async (
     )
 }
 
-export default UserTable;
+export default RetailerSearch;

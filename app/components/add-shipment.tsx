@@ -6,7 +6,6 @@ import { BrowserProvider } from 'ethers'
 import { ethers } from "ethers";
 import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
-import { revalidatePath } from "next/cache";
 
 const AddShipment = () => {
     const { walletProvider } = useWeb3ModalProvider();
@@ -44,8 +43,7 @@ const AddShipment = () => {
                 // Check if the transaction was successful
                 if (receipt.status === 1) {
                     console.log("Transaction successful!");
-                    revalidatePath("/distributor")
-                    router.push("/distributor")
+                    router.push("/reload?path=distributor")
                 } else {
                     console.error("Transaction failed!");
                 }
