@@ -1,4 +1,4 @@
-import SignInForm from "@/app/components/auth/signin";
+import SignInForm from "@/components/auth/signin";
 import Link from "next/link";
 
 const Page = () => {

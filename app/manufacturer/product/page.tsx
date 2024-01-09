@@ -10,7 +10,6 @@ import { ethers } from "ethers";
 import { pharmaceuticalAddress } from "@/config";
 import Pharmaceutical from "@/lib/Pharmaceutical.json";
 import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
-import { getProduct } from "@/app/lib/blockchain";
 
 const Page = () => {
     const { walletProvider } = useWeb3ModalProvider();

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Search from "@/components/search/search";
-import RetailerSearch from "@/app/components/search/retailer-search";
+import RetailerSearch from "@/components/search/retailer-search";
 import { Suspense } from "react";
 import connectDB from "@/lib/mongodb";
 import Company from "@/models/company";

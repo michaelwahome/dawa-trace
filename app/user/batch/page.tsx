@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Search from "@/components/search/search";
-import BatchSearch from "@/app/components/search/batch-search";
+import BatchSearch from "@/components/search/batch-search";
 import { Suspense } from "react";
 import connectDB from "@/lib/mongodb";
 import Company from "@/models/company";
