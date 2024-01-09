@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Navbar = () => {
     return (
-      <nav className="bg-green-800 p-4 flex items-center justify-evenly">
+      <nav className="bg-green-800 p-4 hidden md:flex items-center justify-evenly">
         <Link href="/" className='text-white font-bold text-xl'>
           DawaTrace
         </Link>
